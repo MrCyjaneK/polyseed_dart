@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:polyseed/polyseed.dart';
+import 'package:polyseed/src/mnemonics/es_lang.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -16,6 +17,8 @@ void main() {
     final expectedBirthday = 1693622412;
     final expectedLegacySeed =
         "avidly chlorine gave yeti ramped certain hybrid comb governing amply hinder pamphlet offend geometry narrate unopened robot epoxy annoyed glide ingested ascend were austere unopened";
+    final expectedLegacySeedEs =
+        "apoyo bestia desnudo revés meter beso este bonsái duelo algodón engaño llaga lámina diamante imperio pobre mortal cochino altar diva fábrica ángulo recurso aplicar algodón";
 
     test('Decode and test for correct birthday', () {
       final seed = Polyseed.decode(expectedSeedString, enLang, coin);
@@ -71,12 +74,36 @@ void main() {
       expect(Polyseed.load(serializedSeed).birthday, seed.birthday);
     });
 
-    test('Generate a 25 Word LegacySeed from a Seed', () {
-      final seed = Polyseed.decode(expectedSeedString, enLang, coin);
-      final keyBytes = seed.generateKey(coin, 32);
-      final legacySeed = LegacySeedLang.getByName("English")
-          .encodePhrase(keyBytes.toHexString());
-      expect(legacySeed, expectedLegacySeed);
+    group('Convert to Legacy Seed', () {
+      test('Generate a 25 Word english LegacySeed from a Seed', () {
+        final seed = Polyseed.decode(expectedSeedString, enLang, coin);
+        final keyBytes = seed.generateKey(coin, 32);
+        final legacySeed = LegacySeedLang.getByName("English")
+            .encodePhrase(keyBytes.toHexString());
+        expect(legacySeed, expectedLegacySeed);
+      });
+
+      test('Generate a 25 Word spanish LegacySeed from a Seed', () {
+        final seed = Polyseed.decode(expectedSeedString, enLang, coin);
+        final keyBytes = seed.generateKey(coin, 32);
+        final legacySeed = LegacySeedLang.getByEnglishName("Spanish")
+            .encodePhrase(keyBytes.toHexString());
+        expect(legacySeed, expectedLegacySeedEs);
+      });
+
+      test(
+          'EdgeCase: Generate a 25 Word Spanish LegacySeed from a Seed with words smaller than the prefix length of the word list',
+          () {
+        final seed = Polyseed.decode(
+            "remedio foca sujeto veneno bello humilde surco crear típico chacal célula empate moreno varón verde masa",
+            esLang,
+            coin);
+        final keyBytes = seed.generateKey(coin, 32);
+        final legacySeed = LegacySeedLang.getByEnglishName("Spanish")
+            .encodePhrase(keyBytes.toHexString());
+        expect(legacySeed,
+            "remedio haz ébano lobo orden celda pezuña regreso ardilla estar acelga fallo punto nación hada quitar ancla obeso piedra pausa helio fuente joroba pista quitar");
+      });
     });
   });
 }
