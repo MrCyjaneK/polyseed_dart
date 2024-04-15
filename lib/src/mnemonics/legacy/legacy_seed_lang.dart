@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hashlib/hashlib.dart';
 import 'package:polyseed/src/mnemonics/legacy/de_lang.dart';
 import 'package:polyseed/src/mnemonics/legacy/en_lang.dart';
@@ -121,10 +123,12 @@ class LegacySeedLang {
   int _getChecksumIndex(List<String> words, int prefixLen) {
     var trimmedWords = '';
     for (var i = 0; i < words.length; i++) {
-      trimmedWords += words[i].substring(0, prefixLen);
+      final actualPrefixLength =
+          words[i].length > prefixLen ? prefixLen : words[i].length;
+      trimmedWords += words[i].substring(0, actualPrefixLength);
     }
 
-    var checksum = trimmedWords.crc32code();
+    var checksum = trimmedWords.crc32code(Encoding.getByName('utf-8'));
     var index = (checksum % words.length);
     return index;
   }
