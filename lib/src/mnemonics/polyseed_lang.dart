@@ -10,6 +10,7 @@ import 'package:polyseed/src/mnemonics/zh_s_lang.dart';
 import 'package:polyseed/src/mnemonics/zh_t_lang.dart';
 import 'package:polyseed/src/utils/exceptions.dart';
 import 'package:polyseed/src/utils/list_extension.dart';
+import 'package:unorm_dart/unorm_dart.dart' as unorm;
 
 class PolyseedLang {
   /// The native name of the language
@@ -64,6 +65,7 @@ class PolyseedLang {
   /// Get the [PolyseedLang] using the words of [phrase]
   static PolyseedLang getByPhrase(String phrase) {
     for (var language in languages) {
+      phrase = language.hasAccents ? unorm.nfkd(phrase) : phrase;
       final phraseWords = phrase.split(language.separator);
       if (language.words.containsAll(phraseWords)) {
         return language;
@@ -83,8 +85,10 @@ class PolyseedLang {
   }
 
   /// Decode a valid seed [phrase] into it's coefficients
-  List<int> decodePhrase(String phrase) =>
-      phrase.split(separator).map((e) => words.indexOf(e)).toList();
+  List<int> decodePhrase(String phrase) => phrase
+      .split(separator)
+      .map((e) => words.indexOf(hasAccents ? unorm.nfkd(e) : e))
+      .toList();
 
   /// Encode a seed [coefficients] into a valid seed phrase
   String encodePhrase(List<int> coefficients) =>

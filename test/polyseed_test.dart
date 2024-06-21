@@ -74,6 +74,20 @@ void main() {
       expect(Polyseed.load(serializedSeed).birthday, seed.birthday);
     });
 
+    test('Normalize french seeds', () {
+      final seedRaw =
+          "merle bureau littoral vaisseau relatif exprimer voiture légal utile académie graffiti ultime substrat redouter oisillon soudure";
+
+      expect(Polyseed.isValidSeed(seedRaw), true);
+    });
+
+    test('Normalize spanish seeds', () {
+      final seedRaw =
+          "remedio foca sujeto veneno bello humilde surco crear típico chacal célula empate moreno varón verde masa";
+
+      expect(Polyseed.isValidSeed(seedRaw), true);
+    });
+
     group('Convert to Legacy Seed', () {
       test('Generate a 25 Word english LegacySeed from a Seed', () {
         final seed = Polyseed.decode(expectedSeedString, enLang, coin);
