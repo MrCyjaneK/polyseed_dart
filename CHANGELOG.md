@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Fix issues with normalization of French and Spanish 
+ 
 ## 0.0.4
 
 - Fix issues with convert to legacy seed for other languages other than english
